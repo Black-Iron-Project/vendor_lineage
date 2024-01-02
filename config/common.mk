@@ -132,6 +132,10 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     build-manifest
 
+# Cloned app exemption
+PRODUCT_COPY_FILES += \
+    vendor/lineage/prebuilt/common/etc/sysconfig/preinstalled-packages-platform-blackiron-product.xml:$(TARGET_COPY_OUT_PRODUCT)/etc/sysconfig/preinstalled-packages-platform-blackiron-product.xml
+
 # Lineage packages
 ifeq ($(PRODUCT_IS_ATV),)
 PRODUCT_PACKAGES += \
