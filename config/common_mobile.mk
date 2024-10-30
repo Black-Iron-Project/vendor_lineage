@@ -10,6 +10,7 @@ include vendor/lineage/config/lineage_audio.mk
 
 # Apps
 PRODUCT_PACKAGES += \
+    AvatarPicker \
     Backgrounds \
     Glimpse \
     LatinIME
