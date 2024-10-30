@@ -16,17 +16,20 @@ PRODUCT_PACKAGES += \
 
 ifeq ($(PRODUCT_TYPE), go)
 PRODUCT_PACKAGES += \
-    Launcher3QuickStepGo
+    TrebuchetQuickStepGo
 
 PRODUCT_DEXPREOPT_SPEED_APPS += \
-    Launcher3QuickStepGo
+    TrebuchetQuickStepGo
 else
 PRODUCT_PACKAGES += \
-    Launcher3QuickStep
+    TrebuchetQuickStep
 
 PRODUCT_DEXPREOPT_SPEED_APPS += \
-    Launcher3QuickStep
+    TrebuchetQuickStep
 endif
+
+PRODUCT_PACKAGES += \
+    TrebuchetOverlay
 
 # Charger
 PRODUCT_PACKAGES += \
@@ -40,6 +43,38 @@ endif
 
 # Customizations
 PRODUCT_PACKAGES += \
+    IconPackCircularAndroidOverlay \
+    IconPackCircularLauncherOverlay \
+    IconPackCircularSettingsOverlay \
+    IconPackCircularSystemUIOverlay \
+    IconPackFilledAndroidOverlay \
+    IconPackFilledLauncherOverlay \
+    IconPackFilledSettingsOverlay \
+    IconPackFilledSystemUIOverlay \
+    IconPackKaiAndroidOverlay \
+    IconPackKaiLauncherOverlay \
+    IconPackKaiSettingsOverlay \
+    IconPackKaiSystemUIOverlay \
+    IconPackRoundedAndroidOverlay \
+    IconPackRoundedLauncherOverlay \
+    IconPackRoundedSettingsOverlay \
+    IconPackRoundedSystemUIOverlay \
+    IconPackSamAndroidOverlay \
+    IconPackSamLauncherOverlay \
+    IconPackSamSettingsOverlay \
+    IconPackSamSystemUIOverlay \
+    IconPackVictorAndroidOverlay \
+    IconPackVictorLauncherOverlay \
+    IconPackVictorSettingsOverlay \
+    IconPackVictorSystemUIOverlay \
+    IconShapePebbleOverlay \
+    IconShapeRoundedRectOverlay \
+    IconShapeSquareOverlay \
+    IconShapeSquircleOverlay \
+    IconShapeTaperedRectOverlay \
+    IconShapeTeardropOverlay \
+    IconShapeVesselOverlay \
+    LineageNavigationBarNoHint \
     NavigationBarMode2ButtonOverlay
 
 # Legal
@@ -56,5 +91,6 @@ PRODUCT_PACKAGES += \
 
 # Themes
 PRODUCT_PACKAGES += \
+    LineageBlackTheme \
     ThemePicker \
     ThemesStub
