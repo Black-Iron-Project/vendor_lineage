@@ -44,13 +44,10 @@ try:
 except:
     device = product
 
-if not depsonly:
-    print("Device %s not found. Attempting to retrieve device repository from LineageOS Github (http://github.com/LineageOS)." % device)
-
 repositories = []
 
 if not depsonly:
-    githubreq = urllib.request.Request("https://raw.githubusercontent.com/LineageOS/mirror/main/default.xml")
+    githubreq = urllib.request.Request("https://raw.githubusercontent.com/Black-Iron-Project/mirror/main/default.xml")
     try:
         result = ElementTree.fromstring(urllib.request.urlopen(githubreq, timeout=10).read().decode())
     except urllib.error.URLError:
@@ -105,20 +102,6 @@ def get_default_revision():
     d = m.findall('default')[0]
     r = d.get('revision')
     return r.replace('refs/heads/', '').replace('refs/tags/', '')
-
-def get_from_manifest(devicename):
-    for path in glob.glob(".repo/local_manifests/*.xml"):
-        try:
-            lm = ElementTree.parse(path)
-            lm = lm.getroot()
-        except:
-            lm = ElementTree.Element("manifest")
-
-        for localpath in lm.findall("project"):
-            if re.search("android_device_.*_%s$" % device, localpath.get("name")):
-                return localpath.get("path")
-
-    return None
 
 def is_in_manifest(projectpath):
     for path in glob.glob(".repo/local_manifests/*.xml"):
@@ -251,7 +234,7 @@ def get_default_or_fallback_revision(repo_name):
 
     try:
         stdout = subprocess.run(
-            ["git", "ls-remote", "-h", "https://:@github.com/LineageOS/" + repo_name],
+            ["git", "ls-remote", "-h", "https://:@github.com/Black-Iron-Project/" + repo_name],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         ).stdout.decode()
