@@ -8,5 +8,4 @@ PRODUCT_SYSTEM_PROPERTIES += \
     ro.lineage.version=$(LINEAGE_VERSION) \
     ro.lineage.display.version=$(LINEAGE_DISPLAY_VERSION) \
     ro.lineage.build.version=$(BLACKIRON_VERSION) \
-    ro.lineage.releasetype=$(BLACKIRON_BUILDTYPE) \
-    ro.modversion=$(LINEAGE_VERSION)
+    ro.lineage.releasetype=$(BLACKIRON_BUILDTYPE)
