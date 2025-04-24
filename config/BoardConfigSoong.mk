@@ -29,7 +29,6 @@ $(foreach v,$(EXPORT_TO_SOONG),$(eval $(call addVar,$(v))))
 SOONG_CONFIG_NAMESPACES += lineageGlobalVars
 SOONG_CONFIG_lineageGlobalVars += \
     additional_gralloc_10_usage_bits \
-    bootloader_message_offset \
     camera_needs_client_info_lib \
     camera_needs_client_info_lib_oplus \
     camera_override_format_from_reserved \
@@ -56,7 +55,6 @@ SOONG_CONFIG_lineageGlobalVars_uses_miui_camera := $(TARGET_USES_MIUI_CAMERA)
 SOONG_CONFIG_lineageGlobalVars_uses_oplus_touch := $(TARGET_USES_OPLUS_TOUCH)
 
 # Set default values
-BOOTLOADER_MESSAGE_OFFSET ?= 0
 TARGET_ADDITIONAL_GRALLOC_10_USAGE_BITS ?= 0
 TARGET_CAMERA_OVERRIDE_FORMAT_FROM_RESERVED ?= false
 TARGET_CAMERA_SERVICE_EXT_LIB ?= libcameraservice_ext_lib
@@ -64,7 +62,6 @@ TARGET_INCLUDES_MIUI_CAMERA ?= false
 
 # Soong value variables
 SOONG_CONFIG_lineageGlobalVars_additional_gralloc_10_usage_bits := $(TARGET_ADDITIONAL_GRALLOC_10_USAGE_BITS)
-SOONG_CONFIG_lineageGlobalVars_bootloader_message_offset := $(BOOTLOADER_MESSAGE_OFFSET)
 SOONG_CONFIG_lineageGlobalVars_target_camera_package_name := $(TARGET_CAMERA_PACKAGE_NAME)
 SOONG_CONFIG_lineageGlobalVars_target_libcameraservice_ext_lib := $(TARGET_CAMERA_SERVICE_EXT_LIB)
 
@@ -119,6 +116,11 @@ endif
 # Power HAL
 ifneq ($(TARGET_POWER_LIBPERFMGR_MODE_EXTENSION_LIB),)
     $(call soong_config_set,power_libperfmgr,mode_extension_lib,$(TARGET_POWER_LIBPERFMGR_MODE_EXTENSION_LIB))
+endif
+
+# Recovery
+ifneq ($(BOOTLOADER_MESSAGE_OFFSET),)
+    $(call soong_config_set,lineage_recovery,bootloader_message_offset,$(BOOTLOADER_MESSAGE_OFFSET))
 endif
 
 # Surfaceflinger
