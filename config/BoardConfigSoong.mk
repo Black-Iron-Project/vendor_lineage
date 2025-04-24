@@ -31,7 +31,6 @@ SOONG_CONFIG_lineageGlobalVars += \
     additional_gralloc_10_usage_bits \
     camera_needs_client_info_lib \
     camera_needs_client_info_lib_oplus \
-    camera_override_format_from_reserved \
     uses_miui_camera \
     target_camera_package_name \
     needs_camera_boottime \
@@ -45,7 +44,6 @@ SOONG_CONFIG_lineageGlobalVars += \
 # Soong bool variables
 SOONG_CONFIG_lineageGlobalVars_camera_needs_client_info_lib := $(TARGET_CAMERA_NEEDS_CLIENT_INFO_LIB)
 SOONG_CONFIG_lineageGlobalVars_camera_needs_client_info_lib_oplus := $(TARGET_CAMERA_NEEDS_CLIENT_INFO_LIB_OPLUS)
-SOONG_CONFIG_lineageGlobalVars_camera_override_format_from_reserved := $(TARGET_CAMERA_OVERRIDE_FORMAT_FROM_RESERVED)
 SOONG_CONFIG_lineageGlobalVars_uses_nothing_camera := $(TARGET_USES_NOTHING_CAMERA)
 SOONG_CONFIG_lineageGlobalVars_uses_oplus_camera := $(TARGET_USES_OPLUS_CAMERA)
 SOONG_CONFIG_lineageGlobalVars_uses_oppo_camera := $(TARGET_USES_OPPO_CAMERA)
@@ -56,7 +54,6 @@ SOONG_CONFIG_lineageGlobalVars_uses_oplus_touch := $(TARGET_USES_OPLUS_TOUCH)
 
 # Set default values
 TARGET_ADDITIONAL_GRALLOC_10_USAGE_BITS ?= 0
-TARGET_CAMERA_OVERRIDE_FORMAT_FROM_RESERVED ?= false
 TARGET_CAMERA_SERVICE_EXT_LIB ?= libcameraservice_ext_lib
 TARGET_INCLUDES_MIUI_CAMERA ?= false
 
@@ -64,6 +61,11 @@ TARGET_INCLUDES_MIUI_CAMERA ?= false
 SOONG_CONFIG_lineageGlobalVars_additional_gralloc_10_usage_bits := $(TARGET_ADDITIONAL_GRALLOC_10_USAGE_BITS)
 SOONG_CONFIG_lineageGlobalVars_target_camera_package_name := $(TARGET_CAMERA_PACKAGE_NAME)
 SOONG_CONFIG_lineageGlobalVars_target_libcameraservice_ext_lib := $(TARGET_CAMERA_SERVICE_EXT_LIB)
+
+# Camera
+ifneq ($(TARGET_CAMERA_OVERRIDE_FORMAT_FROM_RESERVED),)
+    $(call soong_config_set,camera,override_format_from_reserved,$(TARGET_CAMERA_OVERRIDE_FORMAT_FROM_RESERVED))
+endif
 
 # Lineage Health HAL
 ifneq ($(TARGET_HEALTH_CHARGING_CONTROL_CHARGING_PATH),)
