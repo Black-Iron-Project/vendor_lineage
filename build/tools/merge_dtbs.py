@@ -483,7 +483,9 @@ def create_adjacency(devicetrees):
 			if fixup not in symbol_map:
 				continue
 
-			graph[dt.filename].update(symbol_map[fixup])
+			for symbol_dt in symbol_map[fixup]:
+				if dt == symbol_dt:
+					graph[dt.filename].add(symbol_dt)
 
 	return graph
 
