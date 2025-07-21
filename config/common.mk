@@ -2,6 +2,9 @@
 $(call inherit-product-if-exists, vendor/extra/product.mk)
 $(call inherit-product-if-exists, vendor/pixel-framework/config.mk)
 
+# Allow vendor prebuilt repos to exclude themselves from bp scanning
+-include $(sort $(wildcard vendor/*/*/exclude-bp.mk))
+
 include vendor/blackiron/config/blackiron.mk
 
 PRODUCT_BRAND ?= Blackiron
