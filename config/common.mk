@@ -1,10 +1,13 @@
 # Allow vendor/extra to override any property by setting it first
 $(call inherit-product-if-exists, vendor/extra/product.mk)
-$(call inherit-product-if-exists, vendor/pixel-framework/config.mk)
 
-include vendor/blackiron/config/blackiron.mk
+# Bootanimation
+$(call inherit-product, vendor/blackiron/config/bootanimation.mk)
 
-PRODUCT_BRAND ?= Blackiron
+# Certification
+$(call inherit-product-if-exists, vendor/certification/config.mk)
+
+PRODUCT_BRAND ?= BlackironProject
 
 ifeq ($(PRODUCT_GMS_CLIENTID_BASE),)
 PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
@@ -14,17 +17,7 @@ PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
     ro.com.google.clientidbase=$(PRODUCT_GMS_CLIENTID_BASE)
 endif
 
-ifeq ($(PRODUCT_IS_ATV),true)
-ifeq ($(PRODUCT_ATV_CLIENTID_BASE),)
-PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
-    ro.oem.key1=ATV00100020
-else
-PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
-    ro.oem.key1=$(PRODUCT_ATV_CLIENTID_BASE)
-endif
-endif
-
-ifeq ($(TARGET_BUILD_VARIANT),userdebug)
+ifeq ($(TARGET_BUILD_VARIANT),eng)
 # Disable ADB authentication
 PRODUCT_SYSTEM_DEFAULT_PROPERTIES += ro.adb.secure=0
 else
@@ -42,35 +35,39 @@ endif
 
 # Backup Tool
 PRODUCT_COPY_FILES += \
-    vendor/lineage/prebuilt/common/bin/backuptool.sh:install/bin/backuptool.sh \
-    vendor/lineage/prebuilt/common/bin/backuptool.functions:install/bin/backuptool.functions \
-    vendor/lineage/prebuilt/common/bin/50-lineage.sh:$(TARGET_COPY_OUT_SYSTEM)/addon.d/50-lineage.sh
-
-PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST += \
-    system/addon.d/50-lineage.sh
+    vendor/blackiron/prebuilt/common/bin/backuptool.sh:install/bin/backuptool.sh \
+    vendor/blackiron/prebuilt/common/bin/backuptool.functions:install/bin/backuptool.functions
 
 ifneq ($(strip $(AB_OTA_PARTITIONS) $(AB_OTA_POSTINSTALL_CONFIG)),)
 PRODUCT_COPY_FILES += \
-    vendor/lineage/prebuilt/common/bin/backuptool_ab.sh:$(TARGET_COPY_OUT_SYSTEM)/bin/backuptool_ab.sh \
-    vendor/lineage/prebuilt/common/bin/backuptool_ab.functions:$(TARGET_COPY_OUT_SYSTEM)/bin/backuptool_ab.functions \
-    vendor/lineage/prebuilt/common/bin/backuptool_postinstall.sh:$(TARGET_COPY_OUT_SYSTEM)/bin/backuptool_postinstall.sh
+    vendor/blackiron/prebuilt/common/bin/backuptool_ab.sh:$(TARGET_COPY_OUT_SYSTEM)/bin/backuptool_ab.sh \
+    vendor/blackiron/prebuilt/common/bin/backuptool_ab.functions:$(TARGET_COPY_OUT_SYSTEM)/bin/backuptool_ab.functions \
+    vendor/blackiron/prebuilt/common/bin/backuptool_postinstall.sh:$(TARGET_COPY_OUT_SYSTEM)/bin/backuptool_postinstall.sh
 
 PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST += \
     system/bin/backuptool_ab.sh \
     system/bin/backuptool_ab.functions \
     system/bin/backuptool_postinstall.sh
 
+ifneq ($(TARGET_BUILD_VARIANT),user)
 PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
     ro.ota.allow_downgrade=true
 endif
+endif
 
-# Lineage-specific broadcast actions whitelist
+# BtHelper
+PRODUCT_PACKAGES += \
+    BtHelper
+    
+# Blackiron-specific init rc file
 PRODUCT_COPY_FILES += \
-    vendor/lineage/config/permissions/lineage-sysconfig.xml:$(TARGET_COPY_OUT_PRODUCT)/etc/sysconfig/lineage-sysconfig.xml
+    vendor/blackiron/prebuilt/common/etc/init/init.blackiron-system_ext.rc:$(TARGET_COPY_OUT_SYSTEM_EXT)/etc/init/init.blackiron-system_ext.rc
 
-# Lineage-specific init rc file
-PRODUCT_COPY_FILES += \
-    vendor/lineage/prebuilt/common/etc/init/init.lineage-system_ext.rc:$(TARGET_COPY_OUT_SYSTEM_EXT)/etc/init/init.lineage-system_ext.rc
+# ColumbusService
+ifneq ($(TARGET_SUPPORTS_QUICK_TAP),false)
+PRODUCT_PACKAGES += \
+    ColumbusService
+endif
 
 # Enable SIP+VoIP on all targets
 PRODUCT_COPY_FILES += \
@@ -84,22 +81,9 @@ PRODUCT_PACKAGES += \
 PRODUCT_COPY_FILES += \
     frameworks/base/data/keyboards/Vendor_045e_Product_028e.kl:$(TARGET_COPY_OUT_PRODUCT)/usr/keylayout/Vendor_045e_Product_0719.kl
 
-# Component overrides
-PRODUCT_PACKAGES += \
-    lineage-component-overrides.xml
-
-# This is Lineage!
-PRODUCT_COPY_FILES += \
-    vendor/lineage/config/permissions/org.lineageos.android.xml:$(TARGET_COPY_OUT_PRODUCT)/etc/permissions/org.lineageos.android.xml
-
 # Enforce privapp-permissions whitelist
 PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
-    ro.control_privapp_permissions=log
-
-ifneq ($(TARGET_DISABLE_LINEAGE_SDK), true)
-# Lineage SDK
-include vendor/lineage/config/lineage_sdk_common.mk
-endif
+    ro.control_privapp_permissions=enforce
 
 # Do not include art debug targets
 PRODUCT_ART_TARGET_INCLUDE_DEBUG_BUILD := false
@@ -109,50 +93,32 @@ PRODUCT_ART_TARGET_INCLUDE_DEBUG_BUILD := false
 # leave less information available via JDWP.
 PRODUCT_MINIMIZE_JAVA_DEBUG_INFO := true
 
+# Disable userdata image build
+PRODUCT_BUILD_USERDATA_IMAGE := false
+
 # Disable vendor restrictions
 PRODUCT_RESTRICT_VENDOR_FILES := false
 
-ifneq ($(TARGET_DISABLE_EPPE),true)
-# Require all requested packages to exist
-$(call enforce-product-packages-exist-internal,$(wildcard device/*/$(LINEAGE_BUILD)/$(TARGET_PRODUCT).mk),product_manifest.xml rild Calendar Launcher3 Launcher3Go Launcher3QuickStep Launcher3QuickStepGo android.hidl.memory@1.0-impl.vendor vndk_apex_snapshot_package)
-endif
-
-# Bootanimation
-TARGET_SCREEN_WIDTH ?= 1080
-TARGET_SCREEN_HEIGHT ?= 1920
+# Charger
 PRODUCT_PACKAGES += \
-    bootanimation.zip
-
-# Build Manifest
+    charger_res_images \
+    product_charger_res_images \
+    product_charger_res_images_vendor
+    
+ifeq ($(BLACKIRON_BUILDTYPE), OFFICIAL)
+# Blackiron packages
 PRODUCT_PACKAGES += \
-    build-manifest
-
-# Lineage packages
-ifeq ($(PRODUCT_IS_ATV),)
-PRODUCT_PACKAGES += \
-    ExactCalculator \
-    Jelly
-endif
-
-ifeq ($(PRODUCT_IS_AUTOMOTIVE),)
-PRODUCT_PACKAGES += \
-    LineageParts \
-    LineageSetupWizard
-endif
-
-PRODUCT_PACKAGES += \
-    LineageSettingsProvider \
     Updater
 
 PRODUCT_COPY_FILES += \
-    vendor/lineage/prebuilt/common/etc/init/init.lineage-updater.rc:$(TARGET_COPY_OUT_SYSTEM_EXT)/etc/init/init.lineage-updater.rc
+    vendor/blackiron/prebuilt/common/etc/init/init.blackiron-updater.rc:$(TARGET_COPY_OUT_SYSTEM_EXT)/etc/init/init.blackiron-updater.rc
+endif
 
-# Config
-PRODUCT_PACKAGES += \
-    SimpleDeviceConfig \
-    SimpleSettingsConfig
-
-# Extra tools in Lineage
+# Disable RescueParty due to high risk of data loss
+PRODUCT_PRODUCT_PROPERTIES += \
+    persist.sys.disable_rescue=true
+    
+# Extra tools in Blackiron
 PRODUCT_PACKAGES += \
     bash \
     curl \
@@ -170,6 +136,18 @@ PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST += \
     system/bin/getcap \
     system/bin/setcap
 
+# FaceUnlock
+ifneq ($(TARGET_FACE_UNLOCK_SUPPORTED),false)
+PRODUCT_PACKAGES += \
+    FaceUnlock
+
+PRODUCT_SYSTEM_EXT_PROPERTIES += \
+    ro.face.sense_service=true
+
+PRODUCT_COPY_FILES += \
+    frameworks/native/data/etc/android.hardware.biometrics.face.xml:$(TARGET_COPY_OUT_SYSTEM_EXT)/etc/permissions/android.hardware.biometrics.face.xml
+endif
+
 # Filesystems tools
 PRODUCT_PACKAGES += \
     fsck.ntfs \
@@ -185,7 +163,14 @@ PRODUCT_ARTIFACT_PATH_REQUIREMENT_ALLOWED_LIST += \
 
 # FRP
 PRODUCT_COPY_FILES += \
-    vendor/lineage/prebuilt/common/bin/wipe-frp.sh:$(TARGET_COPY_OUT_RECOVERY)/root/system/bin/wipe-frp
+    vendor/blackiron/prebuilt/common/bin/wipe-frp.sh:$(TARGET_COPY_OUT_RECOVERY)/root/system/bin/wipe-frp
+
+# Gboard side padding
+PRODUCT_PRODUCT_PROPERTIES += \
+    ro.com.google.ime.kb_pad_port_l=4 \
+    ro.com.google.ime.kb_pad_port_r=4 \
+    ro.com.google.ime.kb_pad_land_l=64 \
+    ro.com.google.ime.kb_pad_land_r=64
 
 # Openssh
 PRODUCT_PACKAGES += \
@@ -198,15 +183,44 @@ PRODUCT_PACKAGES += \
     start-ssh
 
 PRODUCT_COPY_FILES += \
-    vendor/lineage/prebuilt/common/etc/init/init.openssh.rc:$(TARGET_COPY_OUT_PRODUCT)/etc/init/init.openssh.rc
+    vendor/blackiron/prebuilt/common/etc/init/init.openssh.rc:$(TARGET_COPY_OUT_PRODUCT)/etc/init/init.openssh.rc
+
+# Overlay
+PRODUCT_PRODUCT_PROPERTIES += \
+    ro.boot.vendor.overlay.theme=com.google.android.systemui.gxoverlay_gms
+
+# Packages
+PRODUCT_PACKAGES += \
+    Launcher3QuickStep \
+    ThemePicker
+
+# Permissions
+PRODUCT_COPY_FILES += \
+    vendor/blackiron/config/permissions/com.google.android.apps.dialer.call_recording_audio.features.xml:$(TARGET_COPY_OUT_PRODUCT)/etc/permissions/com.google.android.apps.dialer.call_recording_audio.features.xml \
+    vendor/blackiron/config/permissions/privapp-permissions-settings.xml:$(TARGET_COPY_OUT_SYSTEM_EXT)/etc/permissions/privapp-permissions-settings.xml
+
+# Lineage Health
+PRODUCT_COPY_FILES += \
+    vendor/blackiron/config/permissions/org.lineageos.health.xml:$(TARGET_COPY_OUT_PRODUCT)/etc/permissions/org.lineageos.health.xml
+
+# Lineage-specific file
+PRODUCT_COPY_FILES += \
+    vendor/blackiron/config/permissions/privapp-permissions-lineagehw.xml:$(TARGET_COPY_OUT_SYSTEM_EXT)/etc/permissions/privapp-permissions-lineagehw.xml
 
 # rsync
 PRODUCT_PACKAGES += \
     rsync
 
+# Skip boot JAR checks.
+SKIP_BOOT_JARS_CHECK := true
+
 # Storage manager
 PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
     ro.storage_manager.enabled=true
+
+# TouchGestures
+PRODUCT_PACKAGES += \
+    TouchGestures
 
 # These packages are excluded from user builds
 PRODUCT_PACKAGES_DEBUG += \
@@ -232,9 +246,6 @@ endif
 
 # SystemUI
 PRODUCT_DEXPREOPT_SPEED_APPS += \
-    Launcher3QuickStep \
-    Settings \
-    CarSystemUI \
     SystemUI
 
 PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
@@ -245,17 +256,12 @@ PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
     debug.sf.enable_transaction_tracing=false
 endif
 
-# SetupWizard
-PRODUCT_PRODUCT_PROPERTIES += \
-    setupwizard.theme=glif_v4 \
-    setupwizard.feature.day_night_mode_enabled=true
-
-PRODUCT_ENFORCE_RRO_EXCLUDED_OVERLAYS += vendor/lineage/overlay/no-rro
 PRODUCT_PACKAGE_OVERLAYS += \
-    vendor/lineage/overlay/common \
-    vendor/lineage/overlay/no-rro
+    vendor/blackiron/overlay/common
 
 PRODUCT_PACKAGES += \
+    AndroidBlackThemeOverlay \
+    CustomFontPixelLauncherOverlay \
     DocumentsUIOverlay \
     NetworkStackOverlay \
     PermissionControllerOverlay
@@ -267,16 +273,12 @@ CUSTOM_LOCALES += \
     cy_GB \
     fur_IT
 
-PRODUCT_EXTRA_RECOVERY_KEYS += \
-    vendor/lineage/build/target/product/security/lineage
+# Google apps and services
+$(call inherit-product, vendor/gms/products/gms.mk)
 
-# Cloned app exemption
-PRODUCT_COPY_FILES += \
-    vendor/lineage/prebuilt/common/etc/sysconfig/preinstalled-packages-platform-android-product.xml:$(TARGET_COPY_OUT_PRODUCT)/etc/sysconfig/preinstalled-packages-platform-android-product.xml
-
-include vendor/lineage/config/version.mk
-
--include vendor/lineage-priv/keys/keys.mk
+include vendor/blackiron/config/version.mk
 
 -include $(WORKSPACE)/build_env/image-auto-bits.mk
--include vendor/lineage/config/partner_gms.mk
+
+# Fonts
+include vendor/blackiron/config/fonts.mk

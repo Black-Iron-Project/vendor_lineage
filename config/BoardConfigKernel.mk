@@ -108,7 +108,7 @@ ifneq ($(TARGET_KERNEL_CLANG_VERSION),)
     KERNEL_CLANG_VERSION := clang-$(TARGET_KERNEL_CLANG_VERSION)
 else
     # Use the default version of clang if TARGET_KERNEL_CLANG_VERSION hasn't been set by the device config
-    KERNEL_CLANG_VERSION := clang-r536225
+    KERNEL_CLANG_VERSION := $(LLVM_AOSP_PREBUILTS_VERSION)
 endif
 TARGET_KERNEL_CLANG_PATH ?= $(BUILD_TOP)/prebuilts/clang/host/$(HOST_PREBUILT_TAG)/$(KERNEL_CLANG_VERSION)
 
@@ -124,16 +124,11 @@ endif
 # Clear this first to prevent accidental poisoning from env
 KERNEL_MAKE_FLAGS :=
 
-# Use "safe" default values for kernel build user & host - matches Pixels, helps avoid detection
-KERNEL_MAKE_FLAGS += \
-    KBUILD_BUILD_USER="build-user" \
-    KBUILD_BUILD_HOST="build-host"
-
 # Add back threads, ninja cuts this to $(getconf _NPROCESSORS_ONLN)/2
 KERNEL_MAKE_FLAGS += -j$(shell getconf _NPROCESSORS_ONLN)
 
 TOOLS_PATH_OVERRIDE := \
-    HIP_PATH=none PERL5LIB=$(BUILD_TOP)/prebuilts/tools-lineage/common/perl-base
+    HIP_PATH=none PERL5LIB=$(BUILD_TOP)/prebuilts/tools-blackiron/common/perl-base
 
 ifneq ($(KERNEL_NO_GCC), true)
     GCC_PREBUILTS := $(BUILD_TOP)/prebuilts/gcc/$(HOST_PREBUILT_TAG)
@@ -193,9 +188,9 @@ ifneq ($(KERNEL_NO_GCC), true)
 
     ifeq ($(KERNEL_ARCH),arm64)
         # Add 32-bit GCC to PATH so that arm-linux-androidkernel-as is available for CONFIG_COMPAT_VDSO
-        TOOLS_PATH_OVERRIDE += PATH=$(BUILD_TOP)/prebuilts/tools-lineage/$(HOST_PREBUILT_TAG)/bin:$(KERNEL_TOOLCHAIN_arm):$$PATH
+        TOOLS_PATH_OVERRIDE += PATH=$(BUILD_TOP)/prebuilts/tools-blackiron/$(HOST_PREBUILT_TAG)/bin:$(KERNEL_TOOLCHAIN_arm):$$PATH
     else
-        TOOLS_PATH_OVERRIDE += PATH=$(BUILD_TOP)/prebuilts/tools-lineage/$(HOST_PREBUILT_TAG)/bin:$$PATH
+        TOOLS_PATH_OVERRIDE += PATH=$(BUILD_TOP)/prebuilts/tools-blackiron/$(HOST_PREBUILT_TAG)/bin:$$PATH
     endif
 
     # Set the full path to the clang command and LLVM binutils
@@ -217,7 +212,7 @@ else
     KERNEL_MAKE_FLAGS += HOSTCFLAGS="$(KERNEL_HOST_C_LD_FLAGS_SYSROOT) -I$(BUILD_TOP)/prebuilts/kernel-build-tools/linux-x86/include"
     KERNEL_MAKE_FLAGS += HOSTLDFLAGS="$(KERNEL_HOST_C_LD_FLAGS_SYSROOT) -Wl,-rpath,$(BUILD_TOP)/prebuilts/kernel-build-tools/linux-x86/lib64 -L $(BUILD_TOP)/prebuilts/kernel-build-tools/linux-x86/lib64 -fuse-ld=lld --rtlib=compiler-rt"
 
-    TOOLS_PATH_OVERRIDE += PATH=$(BUILD_TOP)/prebuilts/tools-lineage/$(HOST_PREBUILT_TAG)/bin:$(TARGET_KERNEL_CLANG_PATH)/bin:$(BUILD_TOP)/prebuilts/rust/$(HOST_PREBUILT_TAG)/$(TARGET_KERNEL_RUST_VERSION)/bin:$(BUILD_TOP)/prebuilts/clang-tools/$(HOST_PREBUILT_TAG)/bin:$$PATH
+    TOOLS_PATH_OVERRIDE += PATH=$(BUILD_TOP)/prebuilts/tools-blackiron/$(HOST_PREBUILT_TAG)/bin:$(TARGET_KERNEL_CLANG_PATH)/bin:$(BUILD_TOP)/prebuilts/rust/$(HOST_PREBUILT_TAG)/$(TARGET_KERNEL_RUST_VERSION)/bin:$(BUILD_TOP)/prebuilts/clang-tools/$(HOST_PREBUILT_TAG)/bin:$$PATH
 endif
 
 # Set DTBO image locations so the build system knows to build them

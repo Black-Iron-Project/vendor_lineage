@@ -474,7 +474,7 @@ def create_adjacency(devicetrees):
 
 	for dt in devicetrees:
 		for symbol in dt.list_props('/__symbols__'):
-			symbol_map.setdefault(symbol, []).append(dt.filename)
+			symbol_map.setdefault(symbol, []).append(dt)
 
 	for dt in devicetrees:
 		graph[dt.filename] = set()
@@ -483,7 +483,9 @@ def create_adjacency(devicetrees):
 			if fixup not in symbol_map:
 				continue
 
-			graph[dt.filename].update(symbol_map[fixup])
+			for symbol_dt in symbol_map[fixup]:
+				if dt == symbol_dt:
+					graph[dt.filename].add(symbol_dt)
 
 	return graph
 
@@ -522,7 +524,7 @@ def main():
 	bases = parse_dt_files(args.base)
 	all_bases = '\n'.join(list(map(lambda x: str(x), bases)))
 	logging.info('Parsed bases: \n{}'.format(all_bases))
-
+	
 	logging.info('Parsing techpack dtb files from {}'.format(args.techpack))
 	techpacks = parse_tech_dt_files(args.techpack)
 	all_techpacks = '\n'.join(list(map(lambda x: str(x), techpacks)))

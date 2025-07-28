@@ -1,8 +1,8 @@
-// LineageOS soong configs
+// Blackiron soong configs
 
 bootstrap_go_package {
-    name: "soong-lineage-generator",
-    pkgPath: "lineage/soong/generator",
+    name: "soong-blackiron-generator",
+    pkgPath: "blackiron/soong/generator",
     deps: [
         "blueprint",
         "blueprint-pathtools",
@@ -17,11 +17,11 @@ bootstrap_go_package {
     pluginFor: ["soong_build"],
 }
 
-lineage_generator {
+blackiron_generator {
     name: "generated_kernel_includes",
 
     // The headers make command
-    cmd: "$(PATH_OVERRIDE_SOONG) $(KERNEL_MAKE_CMD) $(KERNEL_MAKE_FLAGS) -C $(TARGET_KERNEL_SOURCE) O=$(KERNEL_BUILD_OUT_PREFIX)$(genDir) ARCH=$(KERNEL_ARCH) $(KERNEL_CROSS_COMPILE) headers_install && vendor/lineage/tools/clean_headers.sh $(KERNEL_BUILD_OUT_PREFIX)$(genDir)",
+    cmd: "$(PATH_OVERRIDE_SOONG) $(KERNEL_MAKE_CMD) $(KERNEL_MAKE_FLAGS) -C $(TARGET_KERNEL_SOURCE) O=$(KERNEL_BUILD_OUT_PREFIX)$(genDir) ARCH=$(KERNEL_ARCH) $(KERNEL_CROSS_COMPILE) headers_install && vendor/blackiron/tools/clean_headers.sh $(KERNEL_BUILD_OUT_PREFIX)$(genDir)",
 
     // Directories that can be imported by a cc_* module generated_headers property
     export_include_dirs: [
@@ -42,11 +42,11 @@ lineage_generator {
     ],
 }
 
-lineage_generator {
+blackiron_generator {
     name: "prebuilt_kernel_includes",
 
     // The headers extract command
-    cmd: "mkdir -p $(KERNEL_BUILD_OUT_PREFIX)$(genDir) && gzip -d < $(TARGET_PREBUILT_KERNEL_HEADERS) | tar -x -C $(KERNEL_BUILD_OUT_PREFIX)$(genDir) && vendor/lineage/tools/clean_headers.sh $(KERNEL_BUILD_OUT_PREFIX)$(genDir)",
+    cmd: "mkdir -p $(KERNEL_BUILD_OUT_PREFIX)$(genDir) && gzip -d < $(TARGET_PREBUILT_KERNEL_HEADERS) | tar -x -C $(KERNEL_BUILD_OUT_PREFIX)$(genDir) && vendor/blackiron/tools/clean_headers.sh $(KERNEL_BUILD_OUT_PREFIX)$(genDir)",
 
     // Directories that can be imported by a cc_* module generated_headers property
     export_include_dirs: [
@@ -59,8 +59,8 @@ lineage_generator {
 }
 
 bootstrap_go_package {
-    name: "soong-lineage-mkdir",
-    pkgPath: "lineage/soong/mkdir",
+    name: "soong-blackiron-mkdir",
+    pkgPath: "blackiron/soong/mkdir",
     deps: [
         "blueprint",
         "blueprint-pathtools",
@@ -96,210 +96,6 @@ cc_library_headers {
 }
 
 cc_library_headers {
-    name: "qti_kernel_headers",
-    defaults: ["generated_kernel_header_defaults"],
-}
-
-cc_library_headers {
     name: "prebuilt_kernel_headers",
     defaults: ["prebuilt_kernel_header_defaults"],
-}
-
-// Target platform agnostic config modules
-soong_config_module_type {
-    name: "camera_needs_client_info_lib",
-    module_type: "cc_defaults",
-    config_namespace: "lineageGlobalVars",
-    bool_variables: ["camera_needs_client_info_lib"],
-    properties: [
-        "cppflags",
-        "shared_libs",
-    ],
-}
-
-camera_needs_client_info_lib {
-    name: "camera_needs_client_info_lib_defaults",
-    soong_config_variables: {
-        camera_needs_client_info_lib: {
-            cppflags: ["-DCAMERA_NEEDS_CLIENT_INFO_LIB"],
-            shared_libs: ["//hardware/oneplus:vendor.oneplus.hardware.camera@1.0"],
-        },
-    },
-}
-
-soong_config_module_type {
-    name: "camera_needs_client_info_lib_oplus",
-    module_type: "cc_defaults",
-    config_namespace: "lineageGlobalVars",
-    bool_variables: ["camera_needs_client_info_lib_oplus"],
-    properties: [
-        "cppflags",
-        "shared_libs",
-    ],
-}
-
-camera_needs_client_info_lib_oplus {
-    name: "camera_needs_client_info_lib_oplus_defaults",
-    soong_config_variables: {
-        camera_needs_client_info_lib_oplus: {
-            cppflags: ["-DCAMERA_NEEDS_CLIENT_INFO_LIB_OPLUS"],
-            shared_libs: ["vendor.oplus.hardware.cameraMDM@2.0"],
-        },
-    },
-}
-
-
-soong_config_module_type {
-    name: "uses_oppo_camera",
-    module_type: "cc_defaults",
-    config_namespace: "lineageGlobalVars",
-    bool_variables: ["uses_oppo_camera"],
-    properties: ["cppflags"],
-}
-
-uses_oppo_camera {
-    name: "uses_oppo_camera_defaults",
-    soong_config_variables: {
-        uses_oppo_camera: {
-            cppflags: ["-DUSES_OPPO_CAMERA"],
-        },
-    },
-}
-
-soong_config_module_type {
-    name: "target_camera_package_name",
-    module_type: "cc_defaults",
-    config_namespace: "lineageGlobalVars",
-    value_variables: ["target_camera_package_name"],
-    properties: ["cppflags"],
-}
-
-target_camera_package_name {
-    name: "camera_package_name_defaults",
-    soong_config_variables: {
-        target_camera_package_name: {
-            cppflags: ["-DCAMERA_PACKAGE_NAME=\"%s\""],
-        },
-    },
-}
-
-soong_config_module_type {
-    name: "libcameraservice_ext_lib",
-    module_type: "cc_defaults",
-    config_namespace: "lineageGlobalVars",
-    value_variables: ["target_libcameraservice_ext_lib"],
-    properties: [
-        "cppflags",
-        "whole_static_libs",
-    ],
-}
-libcameraservice_ext_lib {
-    name: "libcameraservice_ext_lib_defaults",
-    soong_config_variables: {
-        target_libcameraservice_ext_lib: {
-            cppflags: ["-DTARGET_PROVIDES_CAMERA_PROVIDER_EXT_LIB"],
-            whole_static_libs: ["%s"],
-        },
-    },
-}
-
-soong_config_module_type {
-    name: "uses_nothing_camera",
-    module_type: "cc_defaults",
-    config_namespace: "lineageGlobalVars",
-    bool_variables: ["uses_nothing_camera"],
-    properties: ["cppflags"],
-}
-
-uses_nothing_camera {
-    name: "uses_nothing_camera_defaults",
-    soong_config_variables: {
-        uses_nothing_camera: {
-            cppflags: ["-DUSES_NOTHING_CAMERA"],
-        },
-    },
-}
-
-soong_config_module_type {
-    name: "uses_oplus_camera",
-    module_type: "cc_defaults",
-    config_namespace: "lineageGlobalVars",
-    bool_variables: ["uses_oplus_camera"],
-    properties: ["cppflags"],
-}
-
-uses_oplus_camera {
-    name: "uses_oplus_camera_defaults",
-    soong_config_variables: {
-        uses_oplus_camera: {
-            cppflags: ["-DUSES_OPLUS_CAMERA"],
-        },
-    },
-}
-
-soong_config_module_type {
-    name: "include_miui_camera",
-    module_type: "cc_defaults",
-    config_namespace: "lineageGlobalVars",
-    bool_variables: ["include_miui_camera"],
-    properties: ["cppflags"],
-}
-include_miui_camera {
-    name: "includes_miui_camera",
-    soong_config_variables: {
-        include_miui_camera: {
-            cppflags: ["-DINCLUDES_MIUI_CAMERA"],
-        },
-    },
-}
-
-soong_config_module_type {
-    name: "needs_camera_boottime",
-    module_type: "cc_defaults",
-    config_namespace: "lineageGlobalVars",
-    bool_variables: ["needs_camera_boottime"],
-    properties: ["cppflags"],
-}
-
-needs_camera_boottime {
-    name: "needs_camera_boottime_defaults",
-    soong_config_variables: {
-        needs_camera_boottime: {
-            cppflags: ["-DTARGET_CAMERA_BOOTTIME_TIMESTAMP"],
-        },
-    },
-}
-
-soong_config_module_type {
-    name: "uses_miui_camera",
-    module_type: "cc_defaults",
-    config_namespace: "lineageGlobalVars",
-    bool_variables: ["uses_miui_camera"],
-    properties: ["cppflags"],
-}
-
-uses_miui_camera {
-    name: "uses_miui_camera_defaults",
-    soong_config_variables: {
-        uses_miui_camera: {
-            cppflags: ["-DUSES_MIUI_CAMERA"],
-        },
-    },
-}
-
-soong_config_module_type {
-    name: "uses_oplus_touch",
-    module_type: "cc_defaults",
-    config_namespace: "voltageGlobalVars",
-    bool_variables: ["uses_oplus_touch"],
-    properties: ["cppflags"],
-}
-
-uses_oplus_touch {
-    name: "uses_oplus_touch_defaults",
-    soong_config_variables: {
-        uses_oplus_touch: {
-            cppflags: ["-DUSES_OPLUS_TOUCH"],
-        },
-    },
 }

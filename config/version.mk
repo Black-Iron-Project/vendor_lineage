@@ -1,12 +1,22 @@
-LINEAGE_VERSION := Blackiron-$(BLACKIRON_BUILD_VERSION)
+PRODUCT_VERSION_MAJOR = 6
+PRODUCT_VERSION_MINOR = 0
+
+CURRENT_DEVICE=$(shell echo "$(TARGET_PRODUCT)" | cut -d'_' -f 2,3)
+
+BLACKIRON_BUILDTYPE ?= UNOFFICIAL
+
+BLACKIRON_VERSION := BlackironProject-v$(PRODUCT_VERSION_MAJOR).$(PRODUCT_VERSION_MINOR)-$(CURRENT_DEVICE)-$(BLACKIRON_BUILDTYPE)-$(shell date -u +%Y%m%d-%H%M)
 
 # Display version
-LINEAGE_DISPLAY_VERSION := Blackiron-$(BLACKIRON_DISPLAY_VERSION)
+BLACKIRON_DISPLAY_VERSION := v$(PRODUCT_VERSION_MAJOR).$(PRODUCT_VERSION_MINOR)
 
-# LineageOS version properties
+# BlackIron Project version properties
 PRODUCT_SYSTEM_PROPERTIES += \
-    ro.lineage.version=$(LINEAGE_VERSION) \
-    ro.lineage.display.version=$(LINEAGE_DISPLAY_VERSION) \
-    ro.lineage.build.version=$(BLACKIRON_VERSION) \
-    ro.lineage.releasetype=$(BLACKIRON_BUILDTYPE) \
-    ro.modversion=$(LINEAGE_VERSION)
+    ro.blackiron.version=$(BLACKIRON_VERSION) \
+    ro.blackiron.device=$(BLACKIRON_BUILD) \
+    ro.blackiron.display.version=$(BLACKIRON_DISPLAY_VERSION) \
+    ro.blackiron.build.version=$(PRODUCT_VERSION_MAJOR).$(PRODUCT_VERSION_MINOR) \
+    ro.blackiron.releasetype=$(BLACKIRON_BUILDTYPE)
+
+# Signing
+-include vendor/blackiron-priv/keys/keys.mk

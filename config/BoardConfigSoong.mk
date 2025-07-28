@@ -16,46 +16,29 @@ EXPORT_TO_SOONG := \
 # Documentation here:
 # https://github.com/LineageOS/android_build_soong/commit/8328367c44085b948c003116c0ed74a047237a69
 
-$(call add_soong_config_namespace,lineageVarsPlugin)
-$(foreach v,$(EXPORT_TO_SOONG),$(eval $(call add_soong_config_var,lineageVarsPlugin,$(v))))
-
-SOONG_CONFIG_NAMESPACES += lineageGlobalVars
-SOONG_CONFIG_lineageGlobalVars += \
-    camera_needs_client_info_lib \
-    camera_needs_client_info_lib_oplus \
-    uses_miui_camera \
-    target_camera_package_name \
-    needs_camera_boottime \
-    target_libcameraservice_ext_lib \
-    uses_oplus_touch \
-    uses_nothing_camera \
-    uses_oplus_camera \
-    include_miui_camera \
-    uses_oppo_camera
-
-# Soong bool variables
-SOONG_CONFIG_lineageGlobalVars_camera_needs_client_info_lib := $(TARGET_CAMERA_NEEDS_CLIENT_INFO_LIB)
-SOONG_CONFIG_lineageGlobalVars_camera_needs_client_info_lib_oplus := $(TARGET_CAMERA_NEEDS_CLIENT_INFO_LIB_OPLUS)
-SOONG_CONFIG_lineageGlobalVars_uses_nothing_camera := $(TARGET_USES_NOTHING_CAMERA)
-SOONG_CONFIG_lineageGlobalVars_uses_oplus_camera := $(TARGET_USES_OPLUS_CAMERA)
-SOONG_CONFIG_lineageGlobalVars_uses_oppo_camera := $(TARGET_USES_OPPO_CAMERA)
-SOONG_CONFIG_lineageGlobalVars_include_miui_camera := $(TARGET_INCLUDES_MIUI_CAMERA)
-SOONG_CONFIG_lineageGlobalVars_needs_camera_boottime := $(TARGET_CAMERA_BOOTTIME_TIMESTAMP)
-SOONG_CONFIG_lineageGlobalVars_uses_miui_camera := $(TARGET_USES_MIUI_CAMERA)
-SOONG_CONFIG_lineageGlobalVars_uses_oplus_touch := $(TARGET_USES_OPLUS_TOUCH)
-
-# Set default values
-TARGET_CAMERA_SERVICE_EXT_LIB ?= libcameraservice_ext_lib
-TARGET_INCLUDES_MIUI_CAMERA ?= false
-
-# Soong value variables
-SOONG_CONFIG_lineageGlobalVars_target_camera_package_name := $(TARGET_CAMERA_PACKAGE_NAME)
-SOONG_CONFIG_lineageGlobalVars_target_libcameraservice_ext_lib := $(TARGET_CAMERA_SERVICE_EXT_LIB)
+$(call add_soong_config_namespace,blackironVarsPlugin)
+$(foreach v,$(EXPORT_TO_SOONG),$(eval $(call add_soong_config_var,blackironVarsPlugin,$(v))))
 
 # Camera
 ifneq ($(TARGET_CAMERA_OVERRIDE_FORMAT_FROM_RESERVED),)
-    $(warning TARGET_CAMERA_OVERRIDE_FORMAT_FROM_RESERVED is deprecated, please migrate to soong_config_set,camera,override_format_from_reserved)
-    $(call soong_config_set,camera,override_format_from_reserved,$(TARGET_CAMERA_OVERRIDE_FORMAT_FROM_RESERVED))
+    $(error TARGET_CAMERA_OVERRIDE_FORMAT_FROM_RESERVED is deprecated, please migrate to soong_config_set,camera,override_format_from_reserved)
+endif
+ifneq ($(TARGET_CAMERA_PACKAGE_NAME),)
+    $(call soong_config_set,camera,package_name,$(TARGET_CAMERA_PACKAGE_NAME))
+endif
+ifneq ($(TARGET_CAMERA_SERVICE_EXT_LIB),)
+    $(call soong_config_set,libcameraservice,ext_lib,$(TARGET_CAMERA_SERVICE_EXT_LIB))
+endif
+ifneq ($(TARGET_USES_MIUI_CAMERA),)
+    $(call soong_config_set,camera,uses_miui_camera,$(TARGET_USES_MIUI_CAMERA))
+endif
+
+ifneq ($(TARGET_CAMERA_NEEDS_CLIENT_INFO_LIB),)
+    $(call soong_config_set,camera,needs_client_info_lib,$(TARGET_CAMERA_NEEDS_CLIENT_INFO_LIB))
+endif
+
+ifneq ($(TARGET_CAMERA_NEEDS_CLIENT_INFO_LIB_OPLUS),)
+    $(call soong_config_set,camera,needs_client_info_lib_oplus,$(TARGET_CAMERA_NEEDS_CLIENT_INFO_LIB_OPLUS))
 endif
 
 # Libui
@@ -65,46 +48,36 @@ endif
 
 # Lineage Health HAL
 ifneq ($(TARGET_HEALTH_CHARGING_CONTROL_CHARGING_PATH),)
-    $(warning TARGET_HEALTH_CHARGING_CONTROL_CHARGING_PATH is deprecated, please migrate to soong_config_set,lineage_health,charging_control_charging_path)
-    $(call soong_config_set,lineage_health,charging_control_charging_path,$(TARGET_HEALTH_CHARGING_CONTROL_CHARGING_PATH))
+    $(error TARGET_HEALTH_CHARGING_CONTROL_CHARGING_PATH is deprecated, please migrate to soong_config_set,lineage_health,charging_control_charging_path)
 endif
 ifneq ($(TARGET_HEALTH_CHARGING_CONTROL_DEADLINE_PATH),)
-    $(warning TARGET_HEALTH_CHARGING_CONTROL_DEADLINE_PATH is deprecated, please migrate to soong_config_set,lineage_health,charging_control_deadline_path)
-    $(call soong_config_set,lineage_health,charging_control_deadline_path,$(TARGET_HEALTH_CHARGING_CONTROL_DEADLINE_PATH))
+    $(error TARGET_HEALTH_CHARGING_CONTROL_DEADLINE_PATH is deprecated, please migrate to soong_config_set,lineage_health,charging_control_deadline_path)
 endif
 ifneq ($(TARGET_HEALTH_CHARGING_CONTROL_CHARGING_ENABLED),)
-    $(warning TARGET_HEALTH_CHARGING_CONTROL_CHARGING_ENABLED is deprecated, please migrate to soong_config_set,lineage_health,charging_control_charging_enabled)
-    $(call soong_config_set,lineage_health,charging_control_charging_enabled,$(TARGET_HEALTH_CHARGING_CONTROL_CHARGING_ENABLED))
+    $(error TARGET_HEALTH_CHARGING_CONTROL_CHARGING_ENABLED is deprecated, please migrate to soong_config_set,lineage_health,charging_control_charging_enabled)
 endif
 ifneq ($(TARGET_HEALTH_CHARGING_CONTROL_CHARGING_DISABLED),)
-    $(warning TARGET_HEALTH_CHARGING_CONTROL_CHARGING_DISABLED is deprecated, please migrate to soong_config_set,lineage_health,charging_control_charging_disabled)
-    $(call soong_config_set,lineage_health,charging_control_charging_disabled,$(TARGET_HEALTH_CHARGING_CONTROL_CHARGING_DISABLED))
+    $(error TARGET_HEALTH_CHARGING_CONTROL_CHARGING_DISABLED is deprecated, please migrate to soong_config_set,lineage_health,charging_control_charging_disabled)
 endif
 ifneq ($(TARGET_HEALTH_CHARGING_CONTROL_SUPPORTS_BYPASS),)
-    $(warning TARGET_HEALTH_CHARGING_CONTROL_SUPPORTS_BYPASS is deprecated, please migrate to soong_config_set,lineage_health,charging_control_supports_bypass)
-    $(call soong_config_set,lineage_health,charging_control_supports_bypass,$(TARGET_HEALTH_CHARGING_CONTROL_SUPPORTS_BYPASS))
+    $(error TARGET_HEALTH_CHARGING_CONTROL_SUPPORTS_BYPASS is deprecated, please migrate to soong_config_set,lineage_health,charging_control_supports_bypass)
 endif
 ifneq ($(TARGET_HEALTH_CHARGING_CONTROL_SUPPORTS_DEADLINE),)
-    $(warning TARGET_HEALTH_CHARGING_CONTROL_SUPPORTS_DEADLINE is deprecated, please migrate to soong_config_set,lineage_health,charging_control_supports_deadline)
-    $(call soong_config_set,lineage_health,charging_control_supports_deadline,$(TARGET_HEALTH_CHARGING_CONTROL_SUPPORTS_DEADLINE))
+    $(error TARGET_HEALTH_CHARGING_CONTROL_SUPPORTS_DEADLINE is deprecated, please migrate to soong_config_set,lineage_health,charging_control_supports_deadline)
 endif
 ifneq ($(TARGET_HEALTH_CHARGING_CONTROL_SUPPORTS_LIMIT),)
-    $(warning TARGET_HEALTH_CHARGING_CONTROL_SUPPORTS_LIMIT is deprecated, please migrate to soong_config_set,lineage_health,charging_control_supports_limit)
-    $(call soong_config_set,lineage_health,charging_control_supports_limit,$(TARGET_HEALTH_CHARGING_CONTROL_SUPPORTS_LIMIT))
+    $(error TARGET_HEALTH_CHARGING_CONTROL_SUPPORTS_LIMIT is deprecated, please migrate to soong_config_set,lineage_health,charging_control_supports_limit)
 endif
 ifneq ($(TARGET_HEALTH_CHARGING_CONTROL_SUPPORTS_TOGGLE),)
-    $(warning TARGET_HEALTH_CHARGING_CONTROL_SUPPORTS_TOGGLE is deprecated, please migrate to soong_config_set,lineage_health,charging_control_supports_toggle)
-    $(call soong_config_set,lineage_health,charging_control_supports_toggle,$(TARGET_HEALTH_CHARGING_CONTROL_SUPPORTS_TOGGLE))
+    $(error TARGET_HEALTH_CHARGING_CONTROL_SUPPORTS_TOGGLE is deprecated, please migrate to soong_config_set,lineage_health,charging_control_supports_toggle)
 endif
 
 # Surfaceflinger
 ifneq ($(TARGET_SURFACEFLINGER_UDFPS_LIB),)
-    $(warning TARGET_SURFACEFLINGER_UDFPS_LIB is deprecated, please migrate to soong_config_set,surfaceflinger,udfps_lib)
-    $(call soong_config_set,surfaceflinger,udfps_lib,$(TARGET_SURFACEFLINGER_UDFPS_LIB))
+    $(error TARGET_SURFACEFLINGER_UDFPS_LIB is deprecated, please migrate to soong_config_set,surfaceflinger,udfps_lib)
 endif
 
 # Vendor init
 ifneq ($(TARGET_INIT_VENDOR_LIB),)
-    $(warning TARGET_INIT_VENDOR_LIB is deprecated, please migrate to soong_config_set,libinit,vendor_init_lib)
-    $(call soong_config_set,libinit,vendor_init_lib,$(TARGET_INIT_VENDOR_LIB))
+    $(error TARGET_INIT_VENDOR_LIB is deprecated, please migrate to soong_config_set,libinit,vendor_init_lib)
 endif
