@@ -9,12 +9,12 @@ $(call inherit-product-if-exists, external/google-fonts/rubik/fonts.mk)
 
 # Apps
 PRODUCT_PACKAGES += \
-    Camelot \
-    Etar \
-    Profiles \
-    Recorder \
-    Seedvault \
-    Twelve
+#    Camelot \
+#    Etar \
+#    Profiles \
+#    Recorder \
+#    Seedvault \
+#    Twelve
 
 ifneq ($(PRODUCT_NO_CAMERA),true)
 PRODUCT_PACKAGES += \
@@ -32,10 +32,10 @@ PRODUCT_PACKAGES += \
     zstd
 
 # Fonts
-PRODUCT_PACKAGES += \
-    fonts_customization.xml \
-    FontLatoOverlay \
-    FontRubikOverlay
+#PRODUCT_PACKAGES += \
+#    fonts_customization.xml \
+#    FontLatoOverlay \
+#    FontRubikOverlay
 
 # Include Lineage LatinIME dictionaries
 PRODUCT_PACKAGE_OVERLAYS += vendor/lineage/overlay/dictionaries

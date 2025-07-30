@@ -121,30 +121,23 @@ $(call enforce-product-packages-exist-internal,$(wildcard device/*/$(LINEAGE_BUI
 endif
 
 # Bootanimation
-TARGET_SCREEN_WIDTH ?= 1080
-TARGET_SCREEN_HEIGHT ?= 1920
-PRODUCT_PACKAGES += \
-    bootanimation.zip
+#TARGET_SCREEN_WIDTH ?= 1080
+#TARGET_SCREEN_HEIGHT ?= 1920
+#PRODUCT_PACKAGES += \
+#    bootanimation.zip
 
 # Build Manifest
 PRODUCT_PACKAGES += \
     build-manifest
 
 # Lineage packages
-ifeq ($(PRODUCT_IS_ATV),)
-PRODUCT_PACKAGES += \
-    ExactCalculator \
-    Jelly
-endif
-
-ifeq ($(PRODUCT_IS_AUTOMOTIVE),)
-PRODUCT_PACKAGES += \
-    LineageParts \
-    LineageSetupWizard
-endif
+#ifeq ($(PRODUCT_IS_ATV),)
+#PRODUCT_PACKAGES += \
+#    ExactCalculator \
+#    Jelly
+#endif
 
 PRODUCT_PACKAGES += \
-    LineageSettingsProvider \
     Updater
 
 PRODUCT_COPY_FILES += \
@@ -152,7 +145,7 @@ PRODUCT_COPY_FILES += \
 
 # Config
 PRODUCT_PACKAGES += \
-    SimpleDeviceConfig \
+#    SimpleDeviceConfig \
     SimpleSettingsConfig
 
 # Extra tools in Lineage

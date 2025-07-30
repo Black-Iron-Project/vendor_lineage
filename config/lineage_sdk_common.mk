@@ -9,9 +9,9 @@ PRODUCT_COPY_FILES += \
     vendor/lineage/config/permissions/org.lineageos.trust.xml:$(TARGET_COPY_OUT_PRODUCT)/etc/permissions/org.lineageos.trust.xml
 
 # Lineage Platform Library
-PRODUCT_PACKAGES += \
-    org.lineageos.platform-res \
-    org.lineageos.platform
+#PRODUCT_PACKAGES += \
+#    org.lineageos.platform-res \
+#    org.lineageos.platform
 
 # AOSP has no support of loading framework resources from /system_ext
 # so the SDK has to stay in /system for now
