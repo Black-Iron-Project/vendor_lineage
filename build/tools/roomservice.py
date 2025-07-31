@@ -41,7 +41,7 @@ except ImportError:
 DEBUG = False
 
 custom_local_manifest = ".repo/local_manifests/roomservice.xml"
-custom_default_revision =  "15.0"
+custom_default_revision =  "16.0"
 custom_dependencies = "blackiron.dependencies"
 org_manifest = "Black-Iron-Project"  # leave empty if org is provided in manifest
 org_display = "Blackiron Android"  # needed for displaying
