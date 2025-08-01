@@ -131,7 +131,7 @@ def add_to_manifest(repos, fallback_branch=None):
         elif "/" not in repo_name:
             repo_remote=org_manifest
         elif "/" in repo_name:
-            repo_remote="github"
+            repo_remote="blackiron"
 
         if is_in_manifest(repo_path):
             print('already exists: %s' % repo_path)
