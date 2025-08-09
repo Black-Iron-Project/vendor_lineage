@@ -276,6 +276,8 @@ CUSTOM_LOCALES += \
     cy_GB \
     fur_IT
 
+DEVICE_FRAMEWORK_COMPATIBILITY_MATRIX_FILE += vendor/lineage/config/device_framework_matrix.xml
+
 PRODUCT_EXTRA_RECOVERY_KEYS += \
     vendor/lineage/build/target/product/security/lineage
 
