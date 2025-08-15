@@ -130,7 +130,7 @@ PRODUCT_PACKAGES += \
 
 # Build Manifest
 PRODUCT_PACKAGES += \
-    build-manifest
+    build-manifest.xml
 
 # Cloned app exemption
 PRODUCT_COPY_FILES += \
