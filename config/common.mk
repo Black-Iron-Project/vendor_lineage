@@ -129,10 +129,6 @@ PRODUCT_PACKAGES += \
     bootanimation.zip \
     bootanimation-dark.zip
 
-# Build Manifest
-PRODUCT_PACKAGES += \
-    build-manifest.xml
-
 # Cloned app exemption
 PRODUCT_COPY_FILES += \
     vendor/lineage/prebuilt/common/etc/sysconfig/preinstalled-packages-platform-blackiron-product.xml:$(TARGET_COPY_OUT_PRODUCT)/etc/sysconfig/preinstalled-packages-platform-blackiron-product.xml
