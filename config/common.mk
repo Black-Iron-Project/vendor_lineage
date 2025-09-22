@@ -126,8 +126,7 @@ endif
 TARGET_SCREEN_WIDTH ?= 1080
 TARGET_SCREEN_HEIGHT ?= 1920
 PRODUCT_PACKAGES += \
-    bootanimation.zip \
-    bootanimation-dark.zip
+    bootanimation.zip
 
 # Cloned app exemption
 PRODUCT_COPY_FILES += \
